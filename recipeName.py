@@ -1,0 +1,18 @@
+recipe = {
+    1 : 'Martini',
+    2 : 'Mojito',
+    3 : 'Margarita',
+    4 : 'Tequila Shot',
+    5 : 'Cosmopolitan',
+    6 : 'Old Fashioned',
+    7 : 'Mai Tai',
+    8 : 'Nigasakki',
+    9 : 'Blue Mojito',
+    10 : 'Bloody Mary',
+    11 : 'Manhattan',
+    12 : 'Champagne Cocktail',
+    13 : 'Sex on the Beach',
+    14 : 'Apple Martini',
+    15 : 'Tom Collins',
+    16 : 'Espresso Martini',
+}
