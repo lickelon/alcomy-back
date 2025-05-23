@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from recipeName import recipe
+from recipeName import recipes
 
 app = FastAPI()
 
@@ -12,7 +12,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
@@ -20,16 +20,20 @@ app.add_middleware(
 
 @app.get("/recipe/{recipe_id}")
 async def RecipeById(recipe_id : int):
-    return {"name" : recipe[recipe_id]}
+    return {"name" : next((r["name"] for r in recipes if r["id"] == recipe_id), None)}
 
 @app.get("/recipe/list/")
-async def RecipeList(sort : str | None = None, pivot : str | None = None):
-    if sort == 'asc':
-        return {"id_list" : list(range(1,17))}
-    elif sort == 'desc':
-        return {"id_list" : list(range(1,17)[::-1])}
+async def RecipeList(sort : str | None = None, order : str | None = None):
+    if sort == 'name':
+        return list({r["id"]: r["name"] for r in sorted(recipes, key=lambda x: x["name"], reverse=(order=='desc'))})
+    elif sort == 'abv':
+        return list({r["id"]: r["name"] for r in sorted(recipes, key=lambda x: x["alcohol"], reverse=(order=='desc'))})
+    elif sort == 'latest':
+        return list({r["id"]: r["name"] for r in sorted(recipes, key=lambda x: x["created_at"], reverse=True)})
+    elif sort == 'popular':
+        return list({r["id"]: r["name"] for r in sorted(recipes, key=lambda x: x["popularity"], reverse=True)})
     else:
-        return {"id_list" : list(range(1,17))}
+        return list({r["id"]: r["name"] for r in sorted(recipes, key=lambda x: x["name"])})
 
 @app.get("/recipeStep/{recipe_id}/{step_num}")
 async def RecipeStepById(recipe_id : int, step_num : int):
